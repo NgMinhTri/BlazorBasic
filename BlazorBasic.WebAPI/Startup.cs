@@ -33,6 +33,7 @@ namespace BlazorBasic.WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
             });
+            services.AddTransient<ApplicationDbContextSeeding>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
