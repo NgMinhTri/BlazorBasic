@@ -1,5 +1,5 @@
-﻿using BlazorBasic.WebAPI.Entities;
-using BlazorBasic.WebAPI.Enums;
+﻿using Blazorbasic.Models.Enums;
+using BlazorBasic.WebAPI.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;

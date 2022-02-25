@@ -1,4 +1,5 @@
 using BlazorBasic.WebAPI.Data;
+using BlazorBasic.WebAPI.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +35,7 @@ namespace BlazorBasic.WebAPI
 
             });
             services.AddTransient<ApplicationDbContextSeeding>();
+            services.AddTransient<ITaskRepository, TaskRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

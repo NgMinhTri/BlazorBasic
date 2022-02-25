@@ -1,4 +1,4 @@
-﻿namespace BlazorBasic.WebAPI.Enums
+﻿namespace Blazorbasic.Models.Enums
 {
     public enum Priority
     {
