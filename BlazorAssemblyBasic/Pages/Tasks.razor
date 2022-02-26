@@ -1,0 +1,38 @@
+﻿@page "/taskslist"
+@if (taskList == null)
+{
+    <div>Loading</div>
+}
+else
+{
+<table class = "table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Priority
+            </th>
+            <th>Assigner</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in taskList)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Priority</td>
+                <td>@item.AssignerName</td>
+                <td>@item.CreatedDate.ToString("dd/MM/yyyy hh:mm")</td>
+                <td>@item.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+
+

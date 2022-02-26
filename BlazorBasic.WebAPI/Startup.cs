@@ -34,6 +34,18 @@ namespace BlazorBasic.WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
+
             services.AddTransient<ApplicationDbContextSeeding>();
             services.AddTransient<ITaskRepository, TaskRepository>();
             services.AddControllers();
@@ -56,6 +68,8 @@ namespace BlazorBasic.WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
