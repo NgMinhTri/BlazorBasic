@@ -20,9 +20,9 @@ namespace BlazorBasic.WebAPI.Controllers
             _taskRepository = taskRepository;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] TaskListSearch taskListSearch)
         {
-            var tasks = await _taskRepository.GetTaskList();
+            var tasks = await _taskRepository.GetTaskList(taskListSearch);
             var taskDtos = tasks.Select(x => new TaskDto()
             {
                 Status = x.Status,
@@ -85,7 +85,8 @@ namespace BlazorBasic.WebAPI.Controllers
         public async Task<IActionResult> GetById( Guid id)
         {
             var task = await _taskRepository.GetById(id);
-            if (task == null) return NotFound($"{id} is not found");
+            if (task == null)
+                return NotFound($"{id} is not found");
             return Ok(new TaskDto()
             {
                 Name = task.Name,

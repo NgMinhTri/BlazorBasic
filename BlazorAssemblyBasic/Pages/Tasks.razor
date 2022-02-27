@@ -1,37 +1,84 @@
 ﻿@page "/taskslist"
-@if (taskList == null)
+@using BlazorAssemblyBasic.Components;
+@using Blazorbasic.Models.Enums
+<h1>Tasks</h1>
+@if (taskList == null || Assigners == null)
 {
-    <div>Loading</div>
+    <LoadingIndicator></LoadingIndicator>
 }
 else
 {
-<table class = "table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Priority
-            </th>
-            <th>Assigner</th>
-            <th>Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in taskList)
-        {
+    <div class="row">
+        <EditForm Model="@TaskListSearch" OnSubmit=@SearchForm>
+            <div class="row">
+                <div class="col">
+                    <label>Name</label>
+                    <InputText class="form-control" @bind-Value="TaskListSearch.Name"></InputText>
+                </div>
+
+                <div class="col">
+                    <label>Assigner</label>
+                    <InputSelect class="form-control" @bind-Value="TaskListSearch.AssignerId">
+                        <option>Select an assignee</option>
+                        @foreach (var assignee in Assigners)
+                            {
+                            <option value="@assignee.Id">@assignee.FullName</option>
+                            }
+                    </InputSelect>
+                </div>
+
+                <div class="col">
+                    <label>Priority</label>
+                    <InputSelect class="form-control" @bind-Value="TaskListSearch.Priority">
+                        <option>Select a priority</option>
+                        @foreach (string item in Enum.GetNames(typeof(Priority)))
+                            {
+                            <option value="@item">@item</option>
+                            }
+                    </InputSelect>
+                </div>
+
+                <div class="col pt-4">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+
+
+<div class="row mt-4">
+    <table class = "table">
+        <thead>
             <tr>
-                <td>@item.Name</td>
-                <td>@item.Priority</td>
-                <td>@item.AssignerName</td>
-                <td>@item.CreatedDate.ToString("dd/MM/yyyy hh:mm")</td>
-                <td>@item.Status</td>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Priority
+                </th>
+                <th>Assigner</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in taskList)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Priority</td>
+                    <td>@item.AssignerName</td>
+                    <td>@item.CreatedDate.ToString("dd/MM/yyyy hh:mm")</td>
+                    <td>@item.Status</td>
+                    <td>
+                        <a href="/taskDetails/@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 }
 
 

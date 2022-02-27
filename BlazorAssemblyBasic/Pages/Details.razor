@@ -1,0 +1,47 @@
+﻿@page "/taskDetails/{taskId}"
+<h3>Detail</h3>
+@using BlazorAssemblyBasic.Components;
+@using BlazorAssemblyBasic.Services
+@using Blazorbasic.Models
+@if (taskDetail == null)
+{
+    <LoadingIndicator></LoadingIndicator>
+}
+else
+{
+<h3>Task @taskDetail.Name</h3>
+    <table class="table">
+        <tr>
+            <td>Name</td>
+            <td>@taskDetail.Name</td>
+        </tr>
+        <tr>
+            <td>Assignee</td>
+            <td>@taskDetail.AssignerName</td>
+        </tr>
+        <tr>
+            <td>Create date</td>
+            <td>@taskDetail.CreatedDate</td>
+        </tr>
+        <tr>
+            <td>Priority</td>
+            <td>@taskDetail.Priority</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>@taskDetail.Status</td>
+        </tr>
+    </table>
+}
+@code {
+
+    [Parameter]
+    public string TaskId { get; set; }
+
+     [Inject] private ITaskApiClient TaskApiClient { set; get; }
+        private TaskDto taskDetail;
+        protected override async Task OnInitializedAsync()
+        {
+            taskDetail = await TaskApiClient.GetTaskById(TaskId);
+        }
+}

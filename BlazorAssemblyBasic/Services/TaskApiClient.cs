@@ -13,9 +13,17 @@ namespace BlazorAssemblyBasic.Services
         {
             _httpClient = httpClient;   
         }
-        public async Task<List<TaskDto>> GetTaskList()
+
+        public async Task<TaskDto> GetTaskById(string id)
         {
-            var tasks = await _httpClient.GetFromJsonAsync<List<TaskDto>>("/api/tasks");
+            var task = await _httpClient.GetFromJsonAsync<TaskDto>($"/api/tasks/{id}");
+            return task;
+        }
+
+        public async Task<List<TaskDto>> GetTaskList(TaskListSearch taskListSearch)
+        {
+            string url = $"/api/tasks?name={taskListSearch.Name}&assignerId={taskListSearch.AssignerId}&priority={taskListSearch.Priority}";
+            var tasks = await _httpClient.GetFromJsonAsync<List<TaskDto>>(url);
             return tasks;
         }
     }

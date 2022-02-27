@@ -48,6 +48,8 @@ namespace BlazorBasic.WebAPI
 
             services.AddTransient<ApplicationDbContextSeeding>();
             services.AddTransient<ITaskRepository, TaskRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
