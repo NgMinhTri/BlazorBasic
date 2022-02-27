@@ -1,4 +1,5 @@
 using BlazorBasic.WebAPI.Data;
+using BlazorBasic.WebAPI.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,22 @@ namespace BlazorBasic.WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
+
+            services.AddTransient<ApplicationDbContextSeeding>();
+            services.AddTransient<ITaskRepository, TaskRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -53,6 +70,8 @@ namespace BlazorBasic.WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
