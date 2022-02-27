@@ -1,7 +1,9 @@
-﻿using BlazorBasic.WebAPI.Data;
+﻿using Blazorbasic.Models;
+using BlazorBasic.WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorBasic.WebAPI.Repositories
@@ -15,10 +17,20 @@ namespace BlazorBasic.WebAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Entities.Task>> GetTaskList()
+        public async Task<IEnumerable<Entities.Task>> GetTaskList(TaskListSearch taskListSearch)
         {
-            var tasks = await _context.Tasks.Include(x => x.Assigner).ToListAsync();
-            return tasks;
+            var query = _context.Tasks.Include(x => x.Assigner).AsQueryable();
+            if (!string.IsNullOrEmpty(taskListSearch.Name))
+                query = query.Where(x => x.Name.Contains(taskListSearch.Name));
+
+            if(taskListSearch.AssignerId.HasValue)
+                query = query.Where(x => x.AssignerId == taskListSearch.AssignerId.Value);
+
+            if (taskListSearch.Priority.HasValue)
+                query = query.Where(x => x.Priority == taskListSearch.Priority.Value);
+
+            return await query.ToListAsync();
+
         }
 
         public async Task<Entities.Task> Create(Entities.Task task)

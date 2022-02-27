@@ -1,4 +1,5 @@
 ﻿
+using Blazorbasic.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace BlazorBasic.WebAPI.Repositories
 {
     public interface ITaskRepository
     {
-        Task<IEnumerable<Task>> GetTaskList();
+        Task<IEnumerable<Task>> GetTaskList(TaskListSearch taskListSearch);
         Task<Task> Create(Task task);
 
         Task<Task> Update(Task task);
