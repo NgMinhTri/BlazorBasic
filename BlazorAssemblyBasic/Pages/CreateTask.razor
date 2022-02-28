@@ -1,8 +1,12 @@
 ﻿@page "/createTask"
+@using BlazorAssemblyBasic.Services
 @using Blazorbasic.Models;
 @using Blazorbasic.Models.Enums
+@inject ITaskApiClient TaskApiClient;
+@inject NavigationManager NavigationManager;
 
-<EditForm Model ="Task">
+
+<EditForm Model ="Task" OnValidSubmit="SubmitTask">
    <DataAnnotationsValidator />
   <div class="form-group">
     <label>Name</label>
@@ -28,5 +32,13 @@
 </EditForm>
 
 @code {
-     private TaskCreateRequest Task = new TaskCreateRequest();
+    private TaskCreateRequest Task = new TaskCreateRequest();
+    private async Task SubmitTask()
+    {
+        var result = await TaskApiClient.CreateTask(Task);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/taskslist");
+        }
+    }
 }

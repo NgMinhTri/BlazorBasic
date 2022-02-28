@@ -8,5 +8,6 @@ namespace BlazorAssemblyBasic.Services
     {
         Task<List<TaskDto>> GetTaskList(TaskListSearch taskListSearch);
         Task<TaskDto> GetTaskById(string id);
+        Task<bool> CreateTask(TaskCreateRequest request);
     }
 }
