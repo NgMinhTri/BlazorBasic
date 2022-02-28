@@ -1,0 +1,32 @@
+﻿@page "/createTask"
+@using Blazorbasic.Models;
+@using Blazorbasic.Models.Enums
+
+<EditForm Model ="Task">
+   <DataAnnotationsValidator />
+  <div class="form-group">
+    <label>Name</label>
+    <InputText class="form-control" @bind-Value="Task.Name" placeholder="Enter Name"></InputText>
+    <ValidationMessage For="()=> Task.Name"></ValidationMessage>
+    <small id="nameHelp" class="form-text text-muted">Enter task name</small>
+  </div>
+
+  <div class="form-group">
+    <label>Priority</label>
+    <InputSelect class="form-control" @bind-Value="Task.Priority">
+        <option>Select a priority</option>
+        @foreach (string item in Enum.GetNames(typeof(Priority)))
+            {
+            <option value="@item">@item</option>
+            }
+    </InputSelect>
+    <ValidationMessage For="()=> Task.Priority"></ValidationMessage>
+     <small id="nameHelp" class="form-text text-muted">Enter task name</small>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+     private TaskCreateRequest Task = new TaskCreateRequest();
+}
