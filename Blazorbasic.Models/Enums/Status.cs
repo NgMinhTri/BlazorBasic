@@ -6,7 +6,7 @@
         Inprogress,
         Resolved,
         Done,
-        Canceld,
+        Canceled,
         Closed
     }
 }
