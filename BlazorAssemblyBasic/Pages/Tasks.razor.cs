@@ -1,5 +1,6 @@
 ﻿using BlazorAssemblyBasic.Services;
 using Blazorbasic.Models;
+using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace BlazorAssemblyBasic.Pages
     {
         [Inject] private ITaskApiClient TaskApiClient { set; get; }
         [Inject] private IUserApiClient UserApiClient { set; get; }
+        [Inject] private IToastService ToastService { set; get; }
 
         private List<TaskDto> taskList;
         private List<AssignerDto> Assigners;
@@ -25,6 +27,7 @@ namespace BlazorAssemblyBasic.Pages
 
         private async Task SearchForm(EditContext context)
         {
+            ToastService.ShowInfo("Search completed", "Info");
             taskList = await TaskApiClient.GetTaskList(TaskListSearch);
         }
 

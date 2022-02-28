@@ -4,7 +4,7 @@
 @using Blazorbasic.Models.Enums
 @inject ITaskApiClient TaskApiClient;
 @inject NavigationManager NavigationManager;
-
+@inject IToastService toastService;
 
 <EditForm Model ="Task" OnValidSubmit="SubmitTask">
    <DataAnnotationsValidator />
@@ -38,7 +38,13 @@
         var result = await TaskApiClient.CreateTask(Task);
         if (result)
         {
+            toastService.ShowSuccess($"{Task.Name} has been created successfully.","Success");
             NavigationManager.NavigateTo("/taskslist");
+        }
+        else
+        {
+            toastService.ShowError($"An error occurred in progress. Please contact to administrator.","Error");
+
         }
     }
 }
