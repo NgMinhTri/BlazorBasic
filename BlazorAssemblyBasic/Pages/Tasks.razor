@@ -38,16 +38,23 @@ else
                     <td>@item.CreatedDate.ToString("dd/MM/yyyy hh:mm")</td>
                     <td><StatusLabel Status="item.Status"></StatusLabel></td>
                     <td>
-                        <a href="/taskDetails/@item.Id">Details|</a>
+                        <a href="/taskDetails/@item.Id" class="btn btn-primary">Detail</a>
+                        <a href="/taskEdit/@item.Id" class="btn btn-warning">Edit</a>
+                        <button class="btn btn-danger" @onclick="()=> OnDeleteTask(item.Id)">Delete</button>
                     </td>
-                    <td>
-                        <a href="/editTask/@item.Id">Update</a>
-                    </td>
+                    
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<Confirmation ConfirmationMessage="Are you sure to delete?"
+                  ConfirmationTitle="Delete Task"
+                  @ref="DeleteConfirmation"
+                  ConfirmationChanged="OnConfirmDeleteTask">
+
+</Confirmation>
 }
 
 

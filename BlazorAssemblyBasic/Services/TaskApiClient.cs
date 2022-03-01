@@ -40,5 +40,11 @@ namespace BlazorAssemblyBasic.Services
             var result = await _httpClient.PutAsJsonAsync($"/api/tasks/{taskID}", request);
             return result.IsSuccessStatusCode;
         }
+
+        public async Task<bool> DeleteTask(Guid id)
+        {
+            var result = await _httpClient.DeleteAsync($"/api/tasks/{id}");
+            return result.IsSuccessStatusCode;
+        }
     }
 }
