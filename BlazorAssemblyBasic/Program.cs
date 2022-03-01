@@ -20,9 +20,10 @@ namespace BlazorAssemblyBasic
 
             builder.Services.AddBlazoredToast();
 
-
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5001") });
-
+            builder.Services.AddScoped(sp => new HttpClient 
+            { 
+                BaseAddress = new Uri(builder.Configuration["BackendUrl"]) 
+            });
             await builder.Build().RunAsync();
         }
     }
