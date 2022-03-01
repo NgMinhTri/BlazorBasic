@@ -75,7 +75,10 @@ else
                     <td>@item.CreatedDate.ToString("dd/MM/yyyy hh:mm")</td>
                     <td><StatusLabel Status="item.Status"></StatusLabel></td>
                     <td>
-                        <a href="/taskDetails/@item.Id">Details</a>
+                        <a href="/taskDetails/@item.Id">Details|</a>
+                    </td>
+                    <td>
+                        <a href="/editTask/@item.Id">Update</a>
                     </td>
                 </tr>
             }

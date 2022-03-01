@@ -31,7 +31,7 @@ namespace BlazorBasic.WebAPI.Controllers
                 Priority = x.Priority,
                 Id = x.Guid,
                 AssignerName = x.Assigner != null ? x.Assigner.FirstName + ' ' + x.Assigner.LastName : "N/A"
-            });
+            }).OrderByDescending(taskDtos => taskDtos.CreatedDate);
 
             return Ok(taskDtos);
         }
@@ -51,7 +51,7 @@ namespace BlazorBasic.WebAPI.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] TaskUpdateRequest request)
         {
             if (!ModelState.IsValid)

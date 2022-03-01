@@ -1,0 +1,67 @@
+﻿@page "/editTask/{TaskId}"
+@using BlazorAssemblyBasic.Components
+@using BlazorAssemblyBasic.Services
+@using Blazorbasic.Models
+@using Blazorbasic.Models.Enums
+@inject ITaskApiClient TaskApiClient;
+@inject NavigationManager NavigationManager;
+@inject IToastService toastService;
+
+@if (taskUpdateRequest == null)
+{
+    <LoadingIndicator></LoadingIndicator>
+}
+else
+{
+<EditForm Model ="taskUpdateRequest" OnValidSubmit="Update">
+   <DataAnnotationsValidator />
+  <div class="form-group">
+    <label>Name</label>
+    <InputText class="form-control" @bind-Value="taskUpdateRequest.Name" placeholder="Enter Name"></InputText>
+    <ValidationMessage For="()=> taskUpdateRequest.Name"></ValidationMessage>
+    <small id="nameHelp" class="form-text text-muted">Enter task name</small>
+  </div>
+
+  <div class="form-group">
+    <label>Priority</label>
+    <InputSelect class="form-control" @bind-Value="taskUpdateRequest.Priority">
+        <option>Select a priority</option>
+        @foreach (string item in Enum.GetNames(typeof(Priority)))
+            {
+            <option value="@item">@item</option>
+            }
+    </InputSelect>
+    <ValidationMessage For="()=> taskUpdateRequest.Priority"></ValidationMessage>
+     <small id="nameHelp" class="form-text text-muted">Enter task name</small>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Update</button>
+</EditForm>
+}
+@code {
+    [Parameter]
+    public string TaskId { get; set; }
+    public TaskUpdateRequest taskUpdateRequest = new TaskUpdateRequest();
+    protected override async Task OnInitializedAsync()
+    {
+        var taskDetail = await TaskApiClient.GetTaskById(TaskId);
+        taskUpdateRequest.Name = taskDetail.Name;
+        taskUpdateRequest.Priority = taskDetail.Priority;
+    }
+    private async Task Update()
+    {
+        var result = await TaskApiClient.UpdateTask(Guid.Parse(TaskId), taskUpdateRequest);
+        if (result)
+        {
+            toastService.ShowSuccess($"{taskUpdateRequest.Name} has been updated successfully.","Success");
+            NavigationManager.NavigateTo("/taskslist");
+        }
+        else
+        {
+            toastService.ShowError($"An error occurred in progress. Please contact to administrator.","Error");
+
+        }
+    }
+
+}
+
