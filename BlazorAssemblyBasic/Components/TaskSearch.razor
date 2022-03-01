@@ -1,0 +1,67 @@
+﻿@using BlazorAssemblyBasic.Services
+@using Blazorbasic.Models
+@using Blazorbasic.Models.Enums
+
+@if (Assigners != null)
+{
+<EditForm Model="@TaskListSearch" OnSubmit=@SearchForm>
+<div class="row">
+    <div class="col">
+        <label>Name</label>
+        <InputText class="form-control" @bind-Value="TaskListSearch.Name"></InputText>
+    </div>
+
+    <div class="col">
+        <label>Assigner</label>
+        <InputSelect class="form-control" @bind-Value="TaskListSearch.AssignerId">
+            <option>Select an assigner</option>
+            @foreach (var assigner in Assigners)
+                {
+                <option value="@assigner.Id">@assigner.FullName</option>
+                }
+        </InputSelect>
+    </div>
+
+    <div class="col">
+        <label>Priority</label>
+        <InputSelect class="form-control" @bind-Value="TaskListSearch.Priority">
+            <option>Select a priority</option>
+            @foreach (string item in Enum.GetNames(typeof(Priority)))
+                {
+                <option value="@item">@item</option>
+                }
+        </InputSelect>
+    </div>
+
+    <div class="col pt-4">
+        <button type="submit" class="btn btn-success">Search</button>
+    </div>
+    <div class="col pt-4">
+        <a href="/createTask" class="btn btn-primary">Create</a>
+    </div>
+</div>
+</EditForm>
+}
+
+@code {
+    [Inject] private IUserApiClient UserApiClient { set; get; }
+
+    [Parameter]
+    public EventCallback<TaskListSearch> OnSearch { set; get; }
+
+
+    private TaskListSearch TaskListSearch = new TaskListSearch();
+    private List<AssignerDto> Assigners;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Assigners = await UserApiClient.GetAssigners();
+
+    }
+
+    private async Task SearchForm()
+    {
+        await OnSearch.InvokeAsync(TaskListSearch);
+
+    }
+}
