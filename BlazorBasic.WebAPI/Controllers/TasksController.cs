@@ -79,6 +79,34 @@ namespace BlazorBasic.WebAPI.Controllers
                 CreatedDate = taskResult.CreatedDate
             });
         }
+
+        [HttpPut("{id}/assign")]
+        public async Task<IActionResult> AssignTask(Guid id, [FromBody] AssignTaskRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var taskFromDb = await _taskRepository.GetById(id);
+
+            if (taskFromDb == null)
+            {
+                return NotFound($"{id} is not found");
+            }
+
+            taskFromDb.AssignerId = request.UserId;
+
+            var taskResult = await _taskRepository.Update(taskFromDb);
+
+            return Ok(new TaskDto()
+            {
+                Name = taskResult.Name,
+                Status = taskResult.Status,
+                Id = taskResult.Guid,
+                AssigneeId = taskResult.AssignerId,
+                Priority = taskResult.Priority,
+                CreatedDate = taskResult.CreatedDate
+            });
+        }
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetById( Guid id)

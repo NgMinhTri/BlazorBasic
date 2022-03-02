@@ -12,5 +12,6 @@ namespace BlazorAssemblyBasic.Services
         Task<bool> CreateTask(TaskCreateRequest request);
         Task<bool> UpdateTask(Guid taskID, TaskUpdateRequest request);
         Task<bool> DeleteTask(Guid id);
+        Task<bool> AssignTask(Guid id, AssignTaskRequest request);
     }
 }
