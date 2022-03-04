@@ -1,4 +1,6 @@
 ﻿using Blazorbasic.Models;
+using Blazorbasic.Models.SeedWork;
+using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -28,11 +30,24 @@ namespace BlazorAssemblyBasic.Services
             return task;
         }
 
-        public async Task<List<TaskDto>> GetTaskList(TaskListSearch taskListSearch)
+        public async Task<PagedList<TaskDto>> GetTaskList(TaskListSearch taskListSearch)
         {
-            string url = $"/api/tasks?name={taskListSearch.Name}&assignerId={taskListSearch.AssignerId}&priority={taskListSearch.Priority}";
-            var tasks = await _httpClient.GetFromJsonAsync<List<TaskDto>>(url);
-            return tasks;
+            var queryStringParam = new Dictionary<string, string>
+            {
+                ["pageNumber"] = taskListSearch.PageNumber.ToString()
+            };
+
+            if (!string.IsNullOrEmpty(taskListSearch.Name))
+                queryStringParam.Add("name", taskListSearch.Name);
+            if (taskListSearch.AssignerId.HasValue)
+                queryStringParam.Add("assigneeId", taskListSearch.AssignerId.ToString());
+            if (taskListSearch.Priority.HasValue)
+                queryStringParam.Add("priority", taskListSearch.Priority.ToString());
+
+            string url = QueryHelpers.AddQueryString("/api/tasks", queryStringParam);
+
+            var result = await _httpClient.GetFromJsonAsync<PagedList<TaskDto>>(url);
+            return result;
         }
 
         public async Task<bool> UpdateTask(Guid taskID, TaskUpdateRequest request)

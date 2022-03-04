@@ -1,5 +1,6 @@
 ﻿using Blazorbasic.Models;
 using Blazorbasic.Models.Enums;
+using Blazorbasic.Models.SeedWork;
 using BlazorBasic.WebAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,8 +22,8 @@ namespace BlazorBasic.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] TaskListSearch taskListSearch)
         {
-            var tasks = await _taskRepository.GetTaskList(taskListSearch);
-            var taskDtos = tasks.Select(x => new TaskDto()
+            var pagedList = await _taskRepository.GetTaskList(taskListSearch);
+            var taskDtos = pagedList.Items.Select(x => new TaskDto()
             {
                 Status = x.Status,
                 Name = x.Name,
@@ -33,7 +34,12 @@ namespace BlazorBasic.WebAPI.Controllers
                 AssignerName = x.Assigner != null ? x.Assigner.FirstName + ' ' + x.Assigner.LastName : "N/A"
             }).OrderByDescending(taskDtos => taskDtos.CreatedDate);
 
-            return Ok(taskDtos);
+            return Ok(
+                   new PagedList<TaskDto>(taskDtos.ToList(),
+                       pagedList.MetaData.TotalCount,
+                       pagedList.MetaData.CurrentPage,
+                       pagedList.MetaData.PageSize)
+               );
         }
 
         [HttpPost]

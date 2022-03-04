@@ -39,13 +39,16 @@ else
                     <td><StatusLabel Status="item.Status"></StatusLabel></td>
                     <td>
                         <a href="/taskDetails/@item.Id" class="btn btn-primary">Detail</a>
-                        <a href="/taskEdit/@item.Id" class="btn btn-warning">Edit</a>
+                        <a href="/editTask/@item.Id" class="btn btn-warning">Edit</a>
                         <button class="btn btn-danger" @onclick="()=> OnDeleteTask(item.Id)">Delete</button>
                     </td>
                     
                 </tr>
             }
         </tbody>
+         <tfoot>
+                <Pagination MetaData="MetaData" Spread="2" SelectedPage="SelectedPage"></Pagination>
+            </tfoot>
     </table>
 </div>
 

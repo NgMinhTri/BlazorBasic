@@ -14,7 +14,7 @@
     <div class="col">
         <label>Assigner</label>
         <InputSelect class="form-control" @bind-Value="TaskListSearch.AssignerId">
-            <option>Select an assigner</option>
+            <option  value="">Select an assigner</option>
             @foreach (var assigner in Assigners)
                 {
                 <option value="@assigner.Id">@assigner.FullName</option>

@@ -1,6 +1,8 @@
 ﻿using BlazorAssemblyBasic.Components;
 using BlazorAssemblyBasic.Services;
+using BlazorAssemblyBasic.Shared;
 using Blazorbasic.Models;
+using Blazorbasic.Models.SeedWork;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -20,16 +22,21 @@ namespace BlazorAssemblyBasic.Pages
 
         protected AssignTask AssignTaskDialog { set; get; }
 
+        public MetaData MetaData { get; set; } = new MetaData();
+
+        [CascadingParameter]
+        private Error Error { set; get; }
+
         protected override async Task OnInitializedAsync()
         {
-            taskList = await TaskApiClient.GetTaskList(TaskListSearch);
+            await GetTasks();
         }
 
 
         public async Task SearchTask(TaskListSearch taskListSearch)
         {
             TaskListSearch = taskListSearch;
-            taskList = await TaskApiClient.GetTaskList(TaskListSearch);
+            await GetTasks();
         }
 
 
@@ -44,7 +51,7 @@ namespace BlazorAssemblyBasic.Pages
             if (deleteConfirmed)
             {
                 await TaskApiClient.DeleteTask(DeleteId);
-                taskList = await TaskApiClient.GetTaskList(TaskListSearch);
+                await GetTasks();
             }
         }
 
@@ -59,8 +66,30 @@ namespace BlazorAssemblyBasic.Pages
         {
             if (result)
             {
-                taskList = await TaskApiClient.GetTaskList(TaskListSearch);
+                await GetTasks();
             }
+        }
+
+
+        private async Task GetTasks()
+        {
+            try
+            {
+                var pagingResponse = await TaskApiClient.GetTaskList(TaskListSearch);
+                taskList = pagingResponse.Items;
+                MetaData = pagingResponse.MetaData;
+            }
+            catch(Exception ex)
+            {
+                Error.ProcessError(ex);
+            }
+            
+        }
+
+        private async Task SelectedPage(int page)
+        {
+            TaskListSearch.PageNumber = page;
+            await GetTasks();
         }
 
     }

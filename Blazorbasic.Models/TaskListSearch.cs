@@ -1,9 +1,10 @@
 ﻿using Blazorbasic.Models.Enums;
+using Blazorbasic.Models.SeedWork;
 using System;
 
 namespace Blazorbasic.Models
 {
-    public  class TaskListSearch
+    public  class TaskListSearch : PagingParameters
     {
         public string Name { get; set; }
 

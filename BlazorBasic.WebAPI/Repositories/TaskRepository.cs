@@ -1,4 +1,5 @@
 ﻿using Blazorbasic.Models;
+using Blazorbasic.Models.SeedWork;
 using BlazorBasic.WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,7 +18,7 @@ namespace BlazorBasic.WebAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Entities.Task>> GetTaskList(TaskListSearch taskListSearch)
+        public async Task<PagedList<Entities.Task>> GetTaskList(TaskListSearch taskListSearch)
         {
             var query = _context.Tasks.Include(x => x.Assigner).AsQueryable();
             if (!string.IsNullOrEmpty(taskListSearch.Name))
@@ -29,7 +30,13 @@ namespace BlazorBasic.WebAPI.Repositories
             if (taskListSearch.Priority.HasValue)
                 query = query.Where(x => x.Priority == taskListSearch.Priority.Value);
 
-            return await query.ToListAsync();
+            var count = await query.CountAsync();
+
+            var data = await query.OrderByDescending(x => x.CreatedDate)
+                .Skip((taskListSearch.PageNumber - 1) * taskListSearch.PageSize)
+                .Take(taskListSearch.PageSize)
+                .ToListAsync();
+            return new PagedList<Entities.Task>(data, count, taskListSearch.PageNumber, taskListSearch.PageSize);
 
         }
 
