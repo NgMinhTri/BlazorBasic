@@ -1,7 +1,10 @@
 ﻿using Blazorbasic.Models;
 using Blazorbasic.Models.Enums;
 using Blazorbasic.Models.SeedWork;
+using BlazorBasic.WebAPI.Extensions;
 using BlazorBasic.WebAPI.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -11,6 +14,7 @@ namespace BlazorBasic.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TasksController : ControllerBase
     {
         private readonly ITaskRepository _taskRepository;
@@ -40,6 +44,30 @@ namespace BlazorBasic.WebAPI.Controllers
                        pagedList.MetaData.CurrentPage,
                        pagedList.MetaData.PageSize)
                );
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetByAssigneeId([FromQuery] TaskListSearch taskListSearch)
+        {
+            var userId = User.GetUserId();
+            var pagedList = await _taskRepository.GetTaskListByUserId(Guid.Parse(userId), taskListSearch);
+            var taskDtos = pagedList.Items.Select(x => new TaskDto()
+            {
+                Status = x.Status,
+                Name = x.Name,
+                AssigneeId = x.AssignerId,
+                CreatedDate = x.CreatedDate,
+                Priority = x.Priority,
+                Id = x.Guid,
+                AssignerName = x.Assigner != null ? x.Assigner.FirstName + ' ' + x.Assigner.LastName : "N/A"
+            });
+
+            return Ok(
+                    new PagedList<TaskDto>(taskDtos.ToList(),
+                        pagedList.MetaData.TotalCount,
+                        pagedList.MetaData.CurrentPage,
+                        pagedList.MetaData.PageSize)
+                );
         }
 
         [HttpPost]

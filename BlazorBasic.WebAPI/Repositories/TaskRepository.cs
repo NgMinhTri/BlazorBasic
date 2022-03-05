@@ -65,5 +65,29 @@ namespace BlazorBasic.WebAPI.Repositories
             await _context.SaveChangesAsync();
             return task;
         }
+
+        public async Task<PagedList<Entities.Task>> GetTaskListByUserId(Guid userId, TaskListSearch taskListSearch)
+        {
+            var query = _context.Tasks
+                     .Where(x => x.AssignerId == userId)
+                  .Include(x => x.Assigner).AsQueryable();
+
+            if (!string.IsNullOrEmpty(taskListSearch.Name))
+                query = query.Where(x => x.Name.Contains(taskListSearch.Name));
+
+            if (taskListSearch.AssignerId.HasValue)
+                query = query.Where(x => x.AssignerId == taskListSearch.AssignerId.Value);
+
+            if (taskListSearch.Priority.HasValue)
+                query = query.Where(x => x.Priority == taskListSearch.Priority.Value);
+
+            var count = await query.CountAsync();
+
+            var data = await query.OrderByDescending(x => x.CreatedDate)
+                .Skip((taskListSearch.PageNumber - 1) * taskListSearch.PageSize)
+                .Take(taskListSearch.PageSize)
+                .ToListAsync();
+            return new PagedList<Entities.Task>(data, count, taskListSearch.PageNumber, taskListSearch.PageSize);
+        }
     }
 }
