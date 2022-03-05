@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlazorAssemblyBasic.Pages
 {
-    public partial class Tasks
+    public partial class MyTasks
     {
         [Inject] private ITaskApiClient TaskApiClient { set; get; }
         protected Confirmation DeleteConfirmation { set; get; }
@@ -75,15 +75,15 @@ namespace BlazorAssemblyBasic.Pages
         {
             try
             {
-                var pagingResponse = await TaskApiClient.GetTaskList(TaskListSearch);
+                var pagingResponse = await TaskApiClient.GetMyTasks(TaskListSearch);
                 taskList = pagingResponse.Items;
                 MetaData = pagingResponse.MetaData;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Error.ProcessError(ex);
             }
-            
+
         }
 
         private async Task SelectedPage(int page)
